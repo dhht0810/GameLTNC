@@ -1,15 +1,15 @@
-//#ifndef Bkground_H_
-//#define Bkground_H_
+//#ifndef BaseObject_H_
+//#define BaseObject_H_
 #pragma once
 #include "CommonFunction.h"
-class Bkground
+class BaseObject
 {
 public:
 	//Initializes variables
-	Bkground();
+	BaseObject();
 
 	//Deallocates memory
-	~Bkground();
+	~BaseObject();
 
 	//Loads image at specified path
 	bool LoadImage(SDL_Renderer* renderer,std::string path);
@@ -18,8 +18,11 @@ public:
 	void free();
 
 	//Renders texture at given point
-	void ApplySurface(SDL_Renderer* renderer,int x, int y);
+	void ApplySurface(SDL_Renderer* renderer,int x, int y,SDL_Rect* clip = NULL);
 
+	
+
+	
 	//Gets image dimensions
 	int getWidth();
 	int getHeight();
@@ -31,5 +34,6 @@ private:
 	//Image dimensions
 	int mWidth;
 	int mHeight;
+	
 };
 //#endif

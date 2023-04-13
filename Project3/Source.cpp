@@ -1,17 +1,18 @@
 ﻿#include "CommonFunction.h"
-#include "Bkground.h"
+#include "BaseObject.h"
+#include"WeaponObject.h"
+#include "Character.h"
 using namespace std;
 
-int x_pos=438 ;
-int x_val = 0;
+
 int y_weaponpos;
 int y_weaponval;
 
-
-SDL_Texture* g_object = NULL;
-SDL_Texture* g_weapon = NULL;
-
-Bkground g_Bkground;
+//Character g_char;
+vector<WeaponObject> weapon;
+BaseObject g_Bkground;
+Character g_Character;
+BaseObject g_weapon;
 
 
 void CleanUp()
@@ -30,64 +31,64 @@ void CleanUp()
 	SDL_Quit();
 }
 
-void HandleInputAction(SDL_Event events)
-{
-	if (events.type == SDL_KEYDOWN && events.key.repeat == 0)
-	{
-		switch (events.key.keysym.sym)
-		{
-	
-
-		case SDLK_LEFT:
-			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT];
-			x_val -= 90 / 4;
-			break;
-
-		case SDLK_RIGHT:
-			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT];
-			x_val += 90 / 4;
-			break;
-
-		default:
-			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT];
-			break;
-		}
-	}
-	else if (events.type == SDL_KEYUP && events.key.repeat == 0)
-	{
-		//Adjust the velocity
-		switch (events.key.keysym.sym)
-		{
-		
-		case SDLK_LEFT: 
-			x_val += 90/4; 
-			break;
-		case SDLK_RIGHT: 
-			x_val -= 90/4; 
-			break;
-		}
-	}
-}
-
-
-
-void HandleMove() {
-	x_pos += x_val;
-	if ((x_pos < 0) || (x_pos + 57 > SCREEN_WIDTH))
-	{
-		//Move back
-		x_pos -= x_val;
-	}
-}
-	void moveWepon() {
-		y_weaponpos += 50 / 4;
-		if ((y_weaponpos + 50 > SCREEN_HEIGHT))
-		{
-			//Move back
-			y_weaponpos -= 50/4;
-	 }
-		
-}
+//void HandleInputAction(SDL_Event events)
+//{
+//	if (events.type == SDL_KEYDOWN && events.key.repeat == 0)
+//	{
+//		switch (events.key.keysym.sym)
+//		{
+//	
+//
+//		case SDLK_LEFT:
+//			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT];
+//			x_val -= 90 / 4;
+//			break;
+//
+//		case SDLK_RIGHT:
+//			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT];
+//			x_val += 90 / 4;
+//			break;
+//
+//		default:
+//			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT];
+//			break;
+//		}
+//	}
+//	else if (events.type == SDL_KEYUP && events.key.repeat == 0)
+//	{
+//		//Adjust the velocity
+//		switch (events.key.keysym.sym)
+//		{
+//		
+//		case SDLK_LEFT: 
+//			x_val += 90/4; 
+//			break;
+//		case SDLK_RIGHT: 
+//			x_val -= 90/4; 
+//			break;
+//		}
+//	}
+//}
+//
+//
+//
+//void HandleMove() {
+//	x_pos += x_val;
+//	if ((x_pos < 0) || (x_pos + 57 > SCREEN_WIDTH))
+//	{
+//		//Move back
+//		x_pos -= x_val;
+//	}
+//}
+//	void moveWepon() {
+//		y_weaponpos += 50 / 4;
+//		if ((y_weaponpos + 50 > SCREEN_HEIGHT))
+//		{
+//			//Move back
+//			y_weaponpos -= 50/4;
+//	 }
+//		
+//}
 
 
 bool Init()
@@ -134,6 +135,13 @@ bool Init()
     }
     return success; 
 }
+bool check(SDL_Rect& a, SDL_Rect& b) {
+	if (a.x + a.w <= b.x) return false;
+	if (a.x >= b.x + b.w) return false;
+	if (a.y + a.h <= b.y) return false;
+	if (a.y >= b.y + b.h) return false;
+	return true;
+}
 
 
 int main(int arc, char* argv[]) {
@@ -150,18 +158,23 @@ int main(int arc, char* argv[]) {
 			printf("Failed to load background texture image!\n");
 			
 		}
+		if (!g_Character.LoadImage(g_Renderer, "character.png"))
+		{
+			printf("Failed to load character texture image!\n");
 
+		}
+		if (!g_weapon.LoadImage(g_Renderer, "shuriken.png"))
+		{
+			printf("Failed to load character texture image!\n");
 
-		//g_object = LoadImage("character.png");
-		//if (g_object == NULL) {
-		//	printf("Failed to load character");
-		//	return 0;
-		//	}
-		//g_weapon = LoadImage("shuriken.png");
+		}
+		
+        //g_weapon = LoadImage("shuriken.png");
 		//if (g_weapon == NULL) {
 		//	printf("Failed to load weapon");
 		//	return 0;
 		//}
+		int time = 0;
 		while (!is_quit)
 		{
 			while (SDL_PollEvent(&g_even))
@@ -171,15 +184,27 @@ int main(int arc, char* argv[]) {
 					is_quit = true;
 					break;
 				}
-				/*HandleInputAction(g_even);
-				HandleMove();
-				moveWepon();*/
+				g_Character.HandleInputAction(g_even);
+				g_Character.HandleMove();
+				if (time % 20 == 0) {
+					int a = rand() % 1200 + 1;
+					weapon.emplace_back(a);
+				}
+				//g_character.HandleInputAction(g_even,g_Renderer);
+				//g_character.HandleMove();
+				//moveWepon();//
 				//Blit bkground sang surface
 				   //Clear screen
 				SDL_RenderClear(g_Renderer);
 
 				//Render texture to screen
-				g_Bkground.ApplySurface(g_Renderer,0, 0);
+				g_Bkground.ApplySurface(g_Renderer,NULL, NULL);
+				g_Character.RenderCharacter(g_Renderer, g_Character);
+				
+				
+				for (int i = 0; i < weapon.size(); i++) {
+					weapon[i].CreateWeapon(g_Renderer,g_weapon);
+				}
 				/* ApplySurface(g_Renderer, g_object,x_pos , 487,57,90);
 				 for (int i = 0; i < 2; i++) {
 					 ApplySurface(g_Renderer, g_weapon, 400, y_weaponpos, 50, 50);*/
@@ -189,7 +214,9 @@ int main(int arc, char* argv[]) {
 
 		//Update screen
 			SDL_RenderPresent(g_Renderer);
+			time++;
 		}
+			
 	}
 }
 			
@@ -198,3 +225,4 @@ int main(int arc, char* argv[]) {
 	
 	return 1;
 }
+//

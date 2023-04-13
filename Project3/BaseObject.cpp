@@ -1,18 +1,19 @@
-﻿#include "Bkground.h"
-Bkground::Bkground()
+﻿#include "BaseObject.h"
+BaseObject::BaseObject()
 {
 	//Initialize
 	g_bkground = NULL;
 	mWidth = 0;
 	mHeight = 0;
+	
 }
 
-Bkground::~Bkground()
+BaseObject::~BaseObject()
 {
 	//Deallocate
 	free();
 }
-bool Bkground::LoadImage(SDL_Renderer* renderer,std::string file_path)
+bool BaseObject::LoadImage(SDL_Renderer* renderer,std::string file_path)
 {
 	free();
 	SDL_Texture* NewTexture = NULL;
@@ -50,27 +51,38 @@ bool Bkground::LoadImage(SDL_Renderer* renderer,std::string file_path)
 }
 
 
-void Bkground::ApplySurface(SDL_Renderer* renderer,int x, int y)
+void BaseObject::ApplySurface(SDL_Renderer* renderer,int x, int y,SDL_Rect* clip)
 {
 	SDL_Rect offset;
 	offset.x = x;
 	offset.y = y;
 	offset.w = mWidth;
 	offset.h = mHeight;
-	SDL_RenderCopy(renderer, g_bkground, NULL, &offset);
-
+	if (clip != NULL) {
+		offset.w = clip->w;
+		offset.h = clip->h;
+	}
+	if (mWidth == 1000) {
+		SDL_RenderCopy(renderer, g_bkground, clip, NULL);
+	}
+	else {
+		SDL_RenderCopy(renderer, g_bkground, clip, &offset);
+	}
 }
 
-int Bkground::getWidth()
+
+
+
+int BaseObject::getWidth()
 {
 	return mWidth;
 }
 
-int Bkground::getHeight()
+int BaseObject::getHeight()
 {
 	return mHeight;
 }
-void Bkground::free()
+void BaseObject::free()
 {
 	//Free texture if it exists
 	if (g_bkground != NULL)

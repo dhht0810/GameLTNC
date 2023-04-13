@@ -133,9 +133,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bkground.cpp" />
+    <ClCompile Include="BaseObject.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="CommonFunction.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="WeaponObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\Sdl\09_the_viewport\readme.txt" />
@@ -144,8 +146,10 @@
     <Image Include="bkground.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bkground.h" />
+    <ClInclude Include="BaseObject.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="CommonFunction.h" />
+    <ClInclude Include="WeaponObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
