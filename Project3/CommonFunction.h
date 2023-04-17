@@ -6,6 +6,7 @@
 #include <string>
 #include <SDL_image.h>
 #include<vector>
+#include <ctime>
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 600;
 
