@@ -5,7 +5,7 @@ class WeaponObject: public BaseObject
 {
 public:
 	static const int Width = 50;
-	static const int Height = 50;
+	static const int Height =44 ;
 	//Initializes variables
 	WeaponObject(int x);
 
@@ -28,6 +28,9 @@ private:
 	//The actual hardware texture
 	//Image dimensions
 	SDL_Rect rect;
+	//Dot's collision boxes
+	
+	//Moves the collision boxes relative to the dot's offset
 	
 };
 

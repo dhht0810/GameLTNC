@@ -1,7 +1,7 @@
 #include "Character.h"
 Character::Character() {
-	
-	
+
+
 	x_val = 0;
 	rect = { 0,487,Width,Height };
 }
@@ -61,6 +61,10 @@ void Character::HandleMove() {
 	{
 		//Move back
 		rect.x -= x_val;
+		
+		
 	}
 }
+
+
 

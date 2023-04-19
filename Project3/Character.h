@@ -4,8 +4,8 @@
 class Character: public BaseObject
 {
 public:
-	static const int Width = 57;
-	static const int Height = 90;
+	static const int Width = 54;
+	static const int Height =79;
 	//Initializes variables
 	Character();
 
@@ -26,9 +26,14 @@ public:
 	//Gets image dimensions
 	SDL_Rect getRect();
 
+
+
 	void RenderCharacter(SDL_Renderer* renderer, BaseObject& character);
 		
 private:
+	//Dot's collision boxes
+	std::vector <SDL_Rect> mColliders;
+	//Moves the collision boxes relative to the dot's offset
 	
 	
 	int x_val ;

@@ -11,7 +11,8 @@ int y_weaponval;
 
 BaseObject g_Bkground;
 Character g_Character;
-
+BaseObject g_Death;
+BaseObject g_Font;
 int rand_x = rand() % 1200;
 WeaponObject g_Weapon(rand_x);
 vector<WeaponObject> weaponlist;
@@ -27,10 +28,11 @@ void CleanUp()
 	//Destroy window    
 	SDL_DestroyRenderer(g_Renderer);
 	SDL_DestroyWindow(g_window);
-
+	TTF_CloseFont(font);
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
+	TTF_Quit();
 }
 
 
@@ -73,7 +75,10 @@ bool Init()
 				printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 				success = false;
 			}
-
+			if (TTF_Init() == -1) {
+				printf("SDL_font could not initialize! SDL_font Error: %s\n", TTF_GetError());
+				success = false;
+			}
 		}
 	}
     }
@@ -84,10 +89,9 @@ bool check(SDL_Rect a, SDL_Rect b) {
 	if (a.x + a.w <= b.x) return false;
 	if (a.x >= b.x + b.w) return false;
 	if (a.y + a.h <= b.y) return false;
-	if (a.y >= b.y + b.h) return false;
+	if (a.y >= b.y + b.h-15) return false;
 	return true;
 }
-
 
 
 int main(int arc, char* argv[]) {
@@ -102,7 +106,7 @@ int main(int arc, char* argv[]) {
 			printf("Failed to load background texture image!\n");
 
 		}
-		if (!g_Character.LoadImage(g_Renderer, "character.png"))
+		if (!g_Character.LoadImage(g_Renderer, "character2.png"))
 		{
 			printf("Failed to load character texture image!\n");
 
@@ -112,7 +116,12 @@ int main(int arc, char* argv[]) {
 			printf("Failed to load character texture image!\n");
 
 		}
+		if (!g_Death.LoadImage(g_Renderer, "Dead.png"))
+		{
+			printf("Failed to load character texture image!\n");
 
+		}
+	
 		int time = 0;
 		int i = 10;
 		while (!is_quit)
@@ -128,6 +137,18 @@ int main(int arc, char* argv[]) {
 
 				g_Character.HandleMove();
 			}
+
+			font = TTF_OpenFont("gamefont.ttf", 50);
+			if (font == NULL) {
+				printf("Failed to load character texture image!\n");
+			}
+			else
+			{
+				SDL_Color color = { 255,128,0 };
+				if (!g_Font.LoadTtf(g_Renderer, to_string(score), font, color)) {
+					printf("Failed to load character texture image!\n");
+				}
+			}
 			if (time % 30 == 0) {
 				int a = rand() % 1200 + 1;
 				weaponlist.emplace_back(a);
@@ -137,20 +158,27 @@ int main(int arc, char* argv[]) {
 
 			//Render texture to screen
 			g_Bkground.ApplySurface(g_Renderer, NULL, NULL);
-			g_Character.RenderCharacter(g_Renderer, g_Character);
+			
 			
 			for (int i = 0; i < weaponlist.size(); i++) {
 				weaponlist[i].CreateWeapon(g_Renderer, g_Weapon);
 			}
-			
+			g_Font.ApplySurface(g_Renderer, 0, 0);
+			g_Character.RenderCharacter(g_Renderer, g_Character);
 			SDL_Delay(i);
 			
 			
 			//Update screen
 			SDL_RenderPresent(g_Renderer);
 			time++;
+			if (time % 10 == 0) {
+				score++;
+			}
 			for (int i = 0; i < weaponlist.size(); i++) {
 				if (check(g_Character.getRect(), weaponlist[i].getRect())) {
+					weaponlist.clear();
+					g_Character.free();
+					SDL_RenderClear(g_Renderer);
 					is_quit = true;
 				}
 			}
@@ -165,6 +193,13 @@ int main(int arc, char* argv[]) {
 					is_quit = true;
 					break;
 				}
+				
+				g_Bkground.LoadImage(g_Renderer, "bkground.png");
+				g_Bkground.ApplySurface(g_Renderer, NULL, NULL);
+				g_Death.ApplySurface(g_Renderer, g_Character.getRect().x,g_Character.getRect().y);
+				g_Font.ApplySurface(g_Renderer, 0, 0);
+				SDL_RenderPresent(g_Renderer);
+					
 			}
 		}
 

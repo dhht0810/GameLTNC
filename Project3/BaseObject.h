@@ -14,6 +14,7 @@ public:
 	//Loads image at specified path
 	bool LoadImage(SDL_Renderer* renderer,std::string path);
 
+	bool LoadTtf(SDL_Renderer* renderer, std::string path,TTF_Font* font,SDL_Color color);
 	//Deallocates texture
 	void free();
 

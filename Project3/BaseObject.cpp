@@ -50,6 +50,28 @@ bool BaseObject::LoadImage(SDL_Renderer* renderer,std::string file_path)
 
 }
 
+bool BaseObject::LoadTtf(SDL_Renderer* renderer, std::string path, TTF_Font* font,SDL_Color color) {
+	free();
+	SDL_Surface* load = TTF_RenderText_Solid(font, path.c_str(), color);
+	if (load == NULL) {
+		printf( "TTF_load\n");
+		TTF_GetError();
+	}
+	else {
+		g_bkground = SDL_CreateTextureFromSurface(renderer, load);
+		if (g_bkground == NULL) {
+			printf(  "loadTTF\n");
+			SDL_GetError();
+		}
+		else {
+			mWidth = load->w;
+			mHeight = load->h;
+		}
+		SDL_FreeSurface(load);
+	}
+	return g_bkground != NULL;
+
+}
 
 void BaseObject::ApplySurface(SDL_Renderer* renderer,int x, int y,SDL_Rect* clip)
 {
