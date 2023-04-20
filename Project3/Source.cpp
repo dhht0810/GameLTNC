@@ -145,7 +145,7 @@ int main(int arc, char* argv[]) {
 			else
 			{
 				SDL_Color color = { 255,128,0 };
-				if (!g_Font.LoadTtf(g_Renderer, to_string(score), font, color)) {
+				if (!g_Font.LoadTtf(g_Renderer,"Current Score:"+ to_string(score), font, color)) {
 					printf("Failed to load character texture image!\n");
 				}
 			}
@@ -165,9 +165,11 @@ int main(int arc, char* argv[]) {
 			}
 			g_Font.ApplySurface(g_Renderer, 0, 0);
 			g_Character.RenderCharacter(g_Renderer, g_Character);
+			
+			if (score > 0 && score % 50 == 0) {
+				i=i-0.5;
+			}
 			SDL_Delay(i);
-			
-			
 			//Update screen
 			SDL_RenderPresent(g_Renderer);
 			time++;
@@ -205,7 +207,7 @@ int main(int arc, char* argv[]) {
 
 		CleanUp();
 
-
+		
 		return 1;
 	}
 }
