@@ -13,6 +13,7 @@ BaseObject g_Bkground;
 Character g_Character;
 BaseObject g_Death;
 BaseObject g_Font;
+BaseObject g_Menu;
 int rand_x = rand() % 1200;
 WeaponObject g_Weapon(rand_x);
 vector<WeaponObject> weaponlist;
@@ -85,6 +86,63 @@ bool Init()
 
     return success; 
 }
+
+
+bool CheckFocus(const int &x,const int &y, SDL_Rect& rect) {
+	if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
+		return true;
+	}
+	return false;
+}
+
+int ShowMenu(BaseObject& anh) {
+	if (!anh.LoadImage(g_Renderer, "mainmenu.png"))
+	{
+		printf("Failed to load character texture image!\n");
+
+	}
+	const int MenuItem = 1;
+	SDL_Rect pos_arr[MenuItem];
+	pos_arr[0] = { 760,340,305,40 };
+	
+	int x_Mouse, y_Mouse;
+	SDL_Event event;
+	while (true) {
+		anh.ApplySurface(g_Renderer, NULL, NULL);
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+			case SDL_QUIT:
+				return 1;
+				/*case SDL_MOUSEMOTION:
+				{
+					x_Mouse = event.motion.x;
+					y_Mouse = event.motion.y;
+					for (int i = 0; i < MenuItem; i++) {
+						if (setDot(g_even, pos_arr[0])) {
+
+						}
+					}
+				}*/
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				x_Mouse = event.motion.x;
+				y_Mouse = event.motion.y;
+				for (int i = 0; i < MenuItem; i++) {
+					if (CheckFocus(x_Mouse,y_Mouse,pos_arr[i])) {
+						return i;
+					}
+				}
+			}
+			default:
+				break;
+			}
+		}
+		SDL_RenderPresent(g_Renderer);
+	}
+	
+	return 1;
+
+}
 bool check(SDL_Rect a, SDL_Rect b) {
 	if (a.x + a.w <= b.x) return false;
 	if (a.x >= b.x + b.w) return false;
@@ -121,9 +179,19 @@ int main(int arc, char* argv[]) {
 			printf("Failed to load character texture image!\n");
 
 		}
-	
+		
+		
+		
 		int time = 0;
 		int i = 10;
+		is_quit = false;
+		int menu = ShowMenu(g_Menu);
+		if (menu == NULL) {
+			printf("Function Menu error");
+		}
+		if (menu == 1) {
+			is_quit = true;
+		}
 		while (!is_quit)
 		{
 			while (SDL_PollEvent(&g_even))
@@ -167,9 +235,9 @@ int main(int arc, char* argv[]) {
 			g_Character.RenderCharacter(g_Renderer, g_Character);
 			
 			if (score > 0 && score % 50 == 0) {
-				i=i-0.5;
+				i=i-1;
 			}
-			SDL_Delay(i);
+			SDL_Delay(10);
 			//Update screen
 			SDL_RenderPresent(g_Renderer);
 			time++;
