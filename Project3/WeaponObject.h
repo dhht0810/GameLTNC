@@ -15,20 +15,21 @@ public:
 	//Loads image at specified path
 	//Deallocates texture
 	//void free();
-
-	
+	;
 	//Renders texture at given point
-	void CreateWeapon(SDL_Renderer* renderer, WeaponObject &anh);
+	void CreateWeapon(SDL_Renderer* renderer, WeaponObject &anh,int val);
 
 	
 	//Gets image dimensions
 	SDL_Rect getRect();
 
+	
+
 private:
 	//The actual hardware texture
 	//Image dimensions
 	SDL_Rect rect;
-	//Dot's collision boxes
+	int weapon_val;
 	
 	//Moves the collision boxes relative to the dot's offset
 	

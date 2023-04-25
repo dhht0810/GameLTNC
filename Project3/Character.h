@@ -31,8 +31,8 @@ public:
 	void RenderCharacter(SDL_Renderer* renderer, BaseObject& character);
 		
 private:
-	//Dot's collision boxes
-	std::vector <SDL_Rect> mColliders;
+
+	
 	//Moves the collision boxes relative to the dot's offset
 	
 	
