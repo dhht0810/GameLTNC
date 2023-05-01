@@ -9,16 +9,14 @@ public:
 	//Initializes variables
 	Character();
 
-	//Deallocates memory
-	//~Character();
-
-	//Loads image at specified path
 	
-	//Deallocates texture
-	//void free();
+
+	
+	void SetVal(int x);
+	
 	
 	//Renders texture at given point
-	//void RenderCharacter(SDL_Renderer* renderer, BaseObject& anh);
+	
 
 	void HandleInputAction(SDL_Event &events);
 

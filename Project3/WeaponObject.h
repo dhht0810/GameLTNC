@@ -9,13 +9,8 @@ public:
 	//Initializes variables
 	WeaponObject(int x);
 
-	//Deallocates memory
-	//~WeaponObject();
-
-	//Loads image at specified path
-	//Deallocates texture
-	//void free();
-	;
+	
+	
 	//Renders texture at given point
 	void CreateWeapon(SDL_Renderer* renderer, WeaponObject &anh,int val);
 
@@ -29,9 +24,6 @@ private:
 	//The actual hardware texture
 	//Image dimensions
 	SDL_Rect rect;
-	int weapon_val;
-	
-	//Moves the collision boxes relative to the dot's offset
 	
 };
 

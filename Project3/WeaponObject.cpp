@@ -1,7 +1,7 @@
 #include "WeaponObject.h"
 WeaponObject::WeaponObject(int x) {
 	rect = { x,0,Width,Height};
-	//weapon_val = 3;
+	
 }
 
 

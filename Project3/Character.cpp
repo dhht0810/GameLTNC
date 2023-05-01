@@ -16,17 +16,20 @@ void  Character::HandleInputAction(SDL_Event &events)
 {
 	if (events.type == SDL_KEYDOWN && events.key.repeat == 0)
 	{
+		Mix_PlayChannel(-1, g_Running, 0);
 		switch (events.key.keysym.sym)
 		{
 
 
 		case SDLK_LEFT:
 			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_LEFT];
+			Mix_PlayChannel(-1, g_Running, 0);
 			x_val -= 90 / 4;
 			break;
 
 		case SDLK_RIGHT:
 			//gCurrentSurface = gKeyPressSurfaces[KEY_PRESS_SURFACE_RIGHT];
+			Mix_PlayChannel(-1, g_Running, 0);
 			x_val += 90 / 4;
 			break;
 
@@ -57,14 +60,16 @@ void Character::RenderCharacter(SDL_Renderer* renderer, BaseObject& character) {
 
 void Character::HandleMove() {
 	rect.x += x_val;
-	if ((rect.x < 0) || (rect.x + 57 > SCREEN_WIDTH))
+	if ((rect.x < 0) || (rect.x + 54 > SCREEN_WIDTH))
 	{
 		//Move back
 		rect.x -= x_val;
-		
-		
-	}
+    }
 }
 
+void Character::SetVal(int x) {
+	x_val = x;
+
+ }
 
 
