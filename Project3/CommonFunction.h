@@ -11,6 +11,7 @@
 #include<vector>
 #include <ctime>
 #include <fstream>
+#include <cstdlib>
 using namespace std;
 
 const int SCREEN_WIDTH = 1200;
@@ -34,7 +35,8 @@ static Mix_Chunk* g_Running = NULL;
 static Mix_Music* g_MusicMenu = NULL;
 static Mix_Music* g_MusicGame = NULL;
 
-static int x;
+
+
 static fstream file;
 static int HighScore;
 

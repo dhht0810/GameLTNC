@@ -1,6 +1,7 @@
 ﻿
 
 #include "CommonFunction.h";
+#include "Coin.h"
 bool check(SDL_Rect a, SDL_Rect b) {
 	if (a.x + a.w <= b.x) return false;
 	if (a.x >= b.x + b.w) return false;
@@ -22,3 +23,4 @@ void FileFunction(fstream& file, int n,int& Highscore) {
 	}
 	file.close();
 }
+

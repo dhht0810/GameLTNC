@@ -4,8 +4,8 @@
 class Character: public BaseObject
 {
 public:
-	static const int Width = 54;
-	static const int Height =79;
+	static const int Width = 66;
+	static const int Height =97;
 	//Initializes variables
 	Character();
 

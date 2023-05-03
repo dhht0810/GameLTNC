@@ -84,12 +84,8 @@ void BaseObject::ApplySurface(SDL_Renderer* renderer,int x, int y,SDL_Rect* clip
 		offset.w = clip->w;
 		offset.h = clip->h;
 	}
-	if (mWidth == 576) {
-		SDL_RenderCopy(renderer, g_bkground, clip, NULL);
-	}
-	else {
-		SDL_RenderCopy(renderer, g_bkground, clip, &offset);
-	}
+	SDL_RenderCopy(renderer, g_bkground, clip, &offset);
+	
 }
 
 

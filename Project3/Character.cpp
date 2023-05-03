@@ -60,7 +60,7 @@ void Character::RenderCharacter(SDL_Renderer* renderer, BaseObject& character) {
 
 void Character::HandleMove() {
 	rect.x += x_val;
-	if ((rect.x < 0) || (rect.x + 54 > SCREEN_WIDTH))
+	if ((rect.x < 0) || (rect.x +Width > SCREEN_WIDTH))
 	{
 		//Move back
 		rect.x -= x_val;
