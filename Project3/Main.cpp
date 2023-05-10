@@ -3,29 +3,30 @@
 #include"WeaponObject.h"
 #include "Character.h"
 #include "Coin.h"
-
-
-
-
+#include "Life.h"
 
 BaseObject g_Bkground;
 Character g_Character;
-BaseObject g_Font;
+BaseObject g_Score;
 BaseObject g_HighScore;
 BaseObject g_Menu;
 BaseObject g_End;
 Coin g_Coin;
+Life g_Life;
 int rand_x = rand() % 1200;
 WeaponObject g_Weapon(rand_x);
 vector<WeaponObject> weaponlist;
 void CleanUp()
 {
+	//Free sound
 	Mix_FreeChunk(g_OpenGame);
-	Mix_FreeChunk(g_WeaponHit);
+	Mix_FreeChunk(g_GameOver);
 	Mix_FreeChunk(g_Running);
+	Mix_FreeChunk(g_Hit);
 	g_OpenGame = NULL;
-	g_WeaponHit = NULL;
+	g_GameOver = NULL;
 	g_Running = NULL;
+	g_Hit = NULL;
 
 	Mix_FreeMusic(g_MusicMenu);
 	g_MusicMenu = NULL;
@@ -59,7 +60,7 @@ bool Init()
 	}
 	else
 	{
-		//KhoitaoWindow
+		//Create window
 		g_window = SDL_CreateWindow("New game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (g_window == NULL)
 		{
@@ -67,7 +68,7 @@ bool Init()
 			success = false;
 		}
 		else {
-			//LayBematchoWindow
+			//Create renderer
 			g_Renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
 
 			if (g_Renderer == NULL)
@@ -87,10 +88,12 @@ bool Init()
 					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 					success = false;
 				}
+				//Initialize Font loading
 				if (TTF_Init() == -1) {
 					printf("SDL_font could not initialize! SDL_font Error: %s\n", TTF_GetError());
 					success = false;
 				}
+				//Initialize Audioloading
 				if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 				{
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
@@ -103,15 +106,7 @@ bool Init()
 	return success;
 }
 
-
-
-bool CheckFocus(const int &x,const int &y, SDL_Rect& rect) {
-	if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
-		return true;
-	}
-	return false;
-}
-
+//Initializw Main Menu
 int ShowMenu(BaseObject& anh) {
 	if (!anh.LoadImage(g_Renderer, "mainmenu.png"))
 	{
@@ -120,8 +115,7 @@ int ShowMenu(BaseObject& anh) {
 	}
 	const int MenuItem = 1;
 	SDL_Rect pos_arr[MenuItem];
-	pos_arr[0] = { 760,340,305,40 };
-	
+	pos_arr[0] = { 760,340,305,40 };	
 	int x_Mouse, y_Mouse;
 	SDL_Event event;
 	while (true) {
@@ -158,6 +152,7 @@ int ShowMenu(BaseObject& anh) {
 
 }
 
+//Initiallize EndMenu
 int ShowEndMenu(BaseObject& anh) {
 	if (!anh.LoadImage(g_Renderer, "Endgame.png"))
 	{
@@ -181,6 +176,7 @@ int ShowEndMenu(BaseObject& anh) {
 		}		
 		anh.ApplySurface(g_Renderer, NULL, NULL);
 		g_HighScore.ApplySurface(g_Renderer, 0, 0);
+		g_Score.ApplySurface(g_Renderer, 650, 0);
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:
@@ -217,6 +213,7 @@ int main(int arc, char* argv[]) {
 		printf("Failed to initialize!\n");
 	}
 	else {
+		//Load Media
 		if (!g_Bkground.LoadImage(g_Renderer, "bkground.png"))
 		{
 			printf("Failed to load background texture image!\n");
@@ -229,21 +226,27 @@ int main(int arc, char* argv[]) {
 		}
 		if (!g_Weapon.LoadImage(g_Renderer, "shuriken.png"))
 		{
-			printf("Failed to load character texture image!\n");
+			printf("Failed to load weapom texture image!\n");
 
 		}
 		if (!g_Coin.LoadImage(g_Renderer, "Coin.png"))
 		{
-			printf("Failed to load character texture image!\n");
+			printf("Failed to load coin texture image!\n");
 
 		}
+		g_Life.Init(g_Renderer,g_Life);
 		g_OpenGame = Mix_LoadWAV("StartGame.wav");
 		if (g_OpenGame == NULL) {
 			printf("Failed to load sound!\n");
 			Mix_GetError();
 		}
-		g_WeaponHit = Mix_LoadWAV("Hit.wav");
-		if (g_WeaponHit == NULL) {
+		g_Hit = Mix_LoadWAV("Clash.wav");
+		if (g_Hit == NULL) {
+			printf("Failed to load sound!\n");
+			Mix_GetError();
+		}
+		g_GameOver = Mix_LoadWAV("Hit.wav");
+		if (g_GameOver == NULL) {
 			printf("Failed to load sound!\n");
 			Mix_GetError();
 		}
@@ -264,10 +267,8 @@ int main(int arc, char* argv[]) {
 			printf("Failed to load game menu music!\n");
 			Mix_GetError();
 		}
-
-		int time = 0;
-		int i = 10;
-		
+		//Create time
+		int time = 0;				
 		int menu = ShowMenu(g_Menu);
 		if (menu == NULL) {
 			printf("Function Menu error");
@@ -275,15 +276,17 @@ int main(int arc, char* argv[]) {
 		if (menu == 1) {
 			is_quit = true;
 		}
-		
+		//Star game loop
 		while (true) {
+			//ResetValue
 			is_quit = false;
-			int score = 0;
-			
+			score = 0;
 			int CoinPos = rand() % 1200 + 1;;
 			val = 3;
+			lifecount = 0;
 			g_Character.SetVal(0);
 			g_Coin.SetInitialPos(CoinPos);
+			g_Life.Init(g_Renderer,g_Life);
 			while (!is_quit)
 			{
 				if (Mix_PlayingMusic() == 0)
@@ -298,21 +301,22 @@ int main(int arc, char* argv[]) {
 						is_quit = true;
 						break;
 					}
+					//Handle Movement
 					g_Character.HandleInputAction(g_even);
 					g_Character.HandleMove();					
                 }				
 				font = TTF_OpenFont("gamefont.ttf", 50);
 				if (font == NULL) {
-					printf("Failed to load character texture image!\n");
+					printf("Failed to load Font!\n");
 				}
 				else
 				{
-					if (!g_Font.LoadTtf(g_Renderer, "Current Score:" + to_string(score), font, color)) {
-						printf("Failed to load character texture image!\n");
-					}
-					
+					if (!g_Score.LoadTtf(g_Renderer, "Current Score:" + to_string(score), font, color)) {
+						printf("Failed to load Font!\n");
+					}					
 				}
-				if (time % 30 == 0) {
+				//Create new weapon
+				if (time % 50 == 0) {
 					int a = rand() % 1200 + 1;
 					weaponlist.emplace_back(a);
 				}
@@ -321,29 +325,31 @@ int main(int arc, char* argv[]) {
 
 				//Render texture to screen
 				g_Bkground.ApplySurface(g_Renderer, NULL, NULL);
-				
+				//Coin collider
 				if (check(g_Character.getRect(), g_Coin.getRect())) {
 					score += 10;
 					g_Coin.SetPos();
 					}
-				
-				if (score > 0 && score % 50 == 0) {
-					val++;
+				//Score
+				if (score > 0 && score % 10 == 0) {
+					val+=0.5;
 				}
+				//Render weapon
 				for (int i = 0; i < weaponlist.size(); i++) {
-
-
 					weaponlist[i].CreateWeapon(g_Renderer, g_Weapon, val);
-
 				}
-				g_Font.ApplySurface(g_Renderer, 0, 0);
+				//Render score,character and coin
+				g_Score.ApplySurface(g_Renderer, 0, 0);
 				g_Character.RenderCharacter(g_Renderer, g_Character);
 				g_Coin.CreateCoin(g_Renderer, g_Coin);
-
+				g_Life.CreateLife(g_Renderer, g_Life);
+				//Delay game
 				SDL_Delay(10);
 				//Update screen
 				SDL_RenderPresent(g_Renderer);
-				time++;																
+				//Increase time as long as game is playing
+				time++;
+				//Check Collider
 				for (int i = 0; i < weaponlist.size(); i++) {
 					if (check(weaponlist[i].getRect(), g_Coin.getRect())) {
 						score -= 10;
@@ -353,8 +359,8 @@ int main(int arc, char* argv[]) {
 						g_Coin.SetPos();
 					}
 					if (check(g_Character.getRect(), weaponlist[i].getRect())) {
-						Mix_HaltMusic();
-						Mix_PlayChannel(-1, g_WeaponHit, 0);
+						lifecount++;
+						Mix_PlayChannel(-1, g_Hit, 0);
 						weaponlist.clear();
 						FileFunction(file, 0, HighScore);
 						if (score > HighScore) {
@@ -363,16 +369,21 @@ int main(int arc, char* argv[]) {
 						}
 						
 						SDL_RenderClear(g_Renderer);
-						is_quit = true;
+						if (lifecount == 3) {
+							Mix_HaltMusic();
+							Mix_PlayChannel(-1, g_GameOver, 0);
+							is_quit = true;
+						}
+						else {
+							g_Life.Decrease();
+							g_Life.CreateLife(g_Renderer, g_Life);
+						}
 					}
-				}
-				
-
+				}				
 			}
 			is_quit = false;
-			
-			int end = ShowEndMenu(g_End);
-			
+			//Initialize End Menu
+			int end = ShowEndMenu(g_End);			
 			while (!is_quit) {
 				while (SDL_PollEvent(&g_even)) {
 					if (g_even.type == SDL_QUIT)
@@ -389,15 +400,10 @@ int main(int arc, char* argv[]) {
 					
 				}
 				SDL_RenderPresent(g_Renderer);
-			}
-			
-
-		
+			}					
 	}
 }
-		CleanUp();
-
-		
+		CleanUp();		
 		return 1;
 	}
 

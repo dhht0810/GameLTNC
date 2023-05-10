@@ -138,6 +138,7 @@
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="CommonFunction.cpp" />
+    <ClCompile Include="Life.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="WeaponObject.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="CommonFunction.h" />
+    <ClInclude Include="Life.h" />
     <ClInclude Include="WeaponObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

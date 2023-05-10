@@ -14,7 +14,6 @@ SDL_Rect Coin::getRect() {
 }
 
 void Coin::SetPos() {
-	//srand((unsigned)time(NULL));
 	int x=rand() % 1200 + 1;
 	rect.x = x;
 	if ((rect.x < 0) || (rect.x + Width > SCREEN_WIDTH))

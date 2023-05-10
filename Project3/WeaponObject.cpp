@@ -9,7 +9,7 @@ WeaponObject::WeaponObject(int x) {
 
 void WeaponObject::CreateWeapon(SDL_Renderer* renderer, WeaponObject& anh,int val) {
 	anh.ApplySurface(renderer, rect.x, rect.y);
-	
+	//Falling own
 	rect.y += val;
 	
 }
